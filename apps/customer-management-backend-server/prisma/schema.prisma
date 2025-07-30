@@ -1,0 +1,88 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  email      String?    @unique
+  firstName  String?
+  id         String     @id @default(cuid())
+  lastName   String?
+  password   String
+  roles      Json
+  tasks      Task[]
+  updatedAt  DateTime   @updatedAt
+  username   String     @unique
+}
+
+model Customer {
+  account    Account?   @relation(fields: [accountId], references: [id])
+  accountId  String?
+  activities Activity[]
+  address    String?
+  contacts   Contact[]
+  createdAt  DateTime   @default(now())
+  email      String?
+  firstName  String?
+  id         String     @id @default(cuid())
+  lastName   String?
+  phone      String?
+  tasks      Task[]
+  updatedAt  DateTime   @updatedAt
+}
+
+model Account {
+  address   String?
+  createdAt DateTime   @default(now())
+  customers Customer[]
+  id        String     @id @default(cuid())
+  industry  String?
+  name      String?
+  updatedAt DateTime   @updatedAt
+  website   String?
+}
+
+model Activity {
+  createdAt  DateTime  @default(now())
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  date       DateTime?
+  id         String    @id @default(cuid())
+  note       String?
+  typeField  String?
+  updatedAt  DateTime  @updatedAt
+  user       User?     @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model Task {
+  createdAt   DateTime  @default(now())
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  customerId  String?
+  dueDate     DateTime?
+  id          String    @id @default(cuid())
+  isCompleted Boolean?
+  title       String?
+  updatedAt   DateTime  @updatedAt
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model Contact {
+  createdAt  DateTime  @default(now())
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  email      String?
+  firstName  String?
+  id         String    @id @default(cuid())
+  lastName   String?
+  phone      String?
+  position   String?
+  updatedAt  DateTime  @updatedAt
+}
